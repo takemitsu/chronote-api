@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int           @id @default(autoincrement())
+  name          String? // ユーザ名
+  email         String?       @unique // ユーザーのメール（Google, Apple, Passkeyでのログイン用）
+  password      String? // パスワードを使用する場合
+  provider      String // ログインプロバイダ (google, apple, passkey)
+  providerId    String? // プロバイダ固有のユーザーID
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @default(now()) @updatedAt
+  categories    Category[]
+  anniversaries Anniversary[]
+}
+
+model Category {
+  id            Int           @id @default(autoincrement())
+  userId        Int
+  name          String // カテゴリ名
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @default(now()) @updatedAt
+  user          User          @relation(fields: [userId], references: [id])
+  anniversaries Anniversary[]
+}
+
+model Anniversary {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  categoryId Int
+  name       String // 記念日名
+  date       DateTime // 記念日
+  description  String?   // 記念日説明（オプション）
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+  user       User     @relation(fields: [userId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+}
