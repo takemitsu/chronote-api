@@ -7,7 +7,8 @@
     "update": "aws lambda update-function-code --zip-file fileb://lambda.zip --function-name hello",
     "deploy": "run-s build zip update",
     "dev": "tsx watch src/index.local.ts",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "generate": "npx prisma generate"
   },
   "devDependencies": {
     "@hono/node-server": "^1.13.5",
