@@ -1,10 +1,7 @@
 import { Hono } from 'hono'
 import categoryController from '../controllers/categories'
-import { userIdMiddleware } from '../middlewares/userIdMiddleware'
 
 const router = new Hono()
-
-router.use('*', userIdMiddleware())
 
 router.get('/', categoryController.getAll)
 router.post('/', categoryController.create)

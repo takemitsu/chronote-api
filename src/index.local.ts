@@ -1,6 +1,8 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import router from './routes'
+import * as dotenv from 'dotenv'
+dotenv.config() // .env ファイルを読み込む
 
 const app = new Hono()
 

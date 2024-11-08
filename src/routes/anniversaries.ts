@@ -1,10 +1,7 @@
 import { Hono } from 'hono'
 import anniversaryController from '../controllers/anniversaries'
-import { userIdMiddleware } from '../middlewares/userIdMiddleware'
 
 const router = new Hono()
-
-router.use('*', userIdMiddleware())
 
 router.get('/', anniversaryController.getAll)
 router.post('/', anniversaryController.create)
