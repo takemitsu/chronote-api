@@ -1,9 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import { Context } from 'hono'
-import * as bcrypt from 'bcrypt'
-
-const prisma = new PrismaClient()
+import authService from '../services/authService'
 
 const signupSchema = z.object({
     name: z.string().min(1, 'Name is required'),
@@ -25,19 +23,10 @@ const authController = {
 
         const { name, email, password } = result.data
         try {
-            const hashedPassword = await bcrypt.hash(password, 10)
-            const user = await prisma.user.create({
-                data: {
-                    name,
-                    email,
-                    password: hashedPassword,
-                    provider: 'local', // ローカルアカウント
-                },
-            })
+            const user = await authService.signup(name, email, password)
             return c.json(user, 201)
         } catch (error: any) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                // ユニーク制約エラー
+            if (error.message === 'Email already exists') {
                 return c.json({ error: 'Email already exists' }, 400)
             }
             console.error(error)
@@ -53,19 +42,13 @@ const authController = {
 
         const { email, password } = result.data
         try {
-            const user = await prisma.user.findUnique({ where: { email } })
-            if (!user || user.provider !== 'local') {
+            const { user, token } = await authService.signin(email, password)
+
+            return c.json({ user, token })
+        } catch (error: any) {
+            if (error.message === 'Invalid email or password') {
                 return c.json({ error: 'Invalid email or password' }, 401)
             }
-
-            const passwordMatch = await bcrypt.compare(password, user.password ?? '')
-            if (!passwordMatch) {
-                return c.json({ error: 'Invalid email or password' }, 401)
-            }
-
-            return c.json(user)
-        } catch (error) {
-            console.error(error)
             return c.json({ error: 'Failed to sign in' }, 500)
         }
     },

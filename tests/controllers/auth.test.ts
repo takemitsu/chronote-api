@@ -106,11 +106,11 @@ describe('authController', () => {
                 password: password,
             })
             expect(res.status).toBe(200)
-            expect(res.body).toHaveProperty('id')
-            expect(res.body.name).toBe('Test User')
-            expect(res.body.email).toBe('test@example.net')
-            expect(res.body.password).toBeDefined()
-            expect(res.body.provider).toBe('local')
+            expect(res.body.user).toHaveProperty('id')
+            expect(res.body.user.name).toBe('Test User')
+            expect(res.body.user.email).toBe('test@example.net')
+            expect(res.body.user.password).toBeDefined()
+            expect(res.body.user.provider).toBe('local')
         })
 
         it('should fail to sign in with invalid email', async () => {
