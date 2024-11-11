@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import { Context } from 'hono'
 
@@ -8,14 +8,14 @@ const createAnniversarySchema = z.object({
     name: z.string().min(1, 'Name is required'),
     date: z.string().datetime({ message: 'Invalid date format' }),
     categoryId: z.number().int().positive(),
-    description: z.string().nullable(),
+    description: z.string().optional().nullable(),
 })
 
 const updateAnniversarySchema = z.object({
     name: z.string().min(1, 'Name is required'),
     date: z.string().datetime({ message: 'Invalid date format' }),
     categoryId: z.number().int().positive(),
-    description: z.string().nullable(),
+    description: z.string().optional().nullable(),
 })
 
 const anniversaryController = {
@@ -120,6 +120,10 @@ const anniversaryController = {
             })
             return c.json(anniversary)
         } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+                // 更新対象のカテゴリが見つからない場合
+                return c.json({ error: 'Anniversary not found' }, 404) // 404 エラーを返す
+            }
             console.error(error)
             return c.json({ error: 'Failed to update anniversaries', details: error }, 500)
         }
@@ -139,6 +143,10 @@ const anniversaryController = {
             })
             return c.newResponse(null, { status: 204 })
         } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+                // 更新対象のカテゴリが見つからない場合
+                return c.json({ error: 'Anniversary not found' }, 404) // 404 エラーを返す
+            }
             console.error(error)
             return c.json({ error: 'Failed to delete anniversary' }, 500)
         }
