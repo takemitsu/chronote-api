@@ -8,16 +8,22 @@
     "deploy": "run-s build zip update",
     "dev": "tsx watch src/index.local.ts",
     "seed": "tsx prisma/seed.ts",
-    "generate": "npx prisma generate"
+    "generate": "npx prisma generate",
+    "test": "jest"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.2.0",
     "@hono/node-server": "^1.13.5",
     "@types/bcrypt": "^5.0.2",
+    "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.7",
     "esbuild": "^0.21.4",
+    "jest": "^29.7.0",
     "npm-run-all2": "^6.2.0",
     "prettier": "^3.3.3",
     "prisma": "^5.22.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
     "tsx": "^4.19.2"
   },
   "dependencies": {

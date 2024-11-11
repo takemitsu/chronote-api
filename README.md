@@ -31,11 +31,19 @@ GRANT ALL PRIVILEGES ON chronote.* TO 'chronote_user'@'%';
 FLUSH PRIVILEGES;
 ```
 
+テスト用データベース作成
+
+```sql
+CREATE DATABASE chronote_test;
+GRANT ALL PRIVILEGES ON chronote_test.* TO 'chronote_user'@'%';
+FLUSH PRIVILEGES;
+```
+
 ### migrate|create tables
 
 ```zsh
 # db 反映
-npx prisma db push
+npx prisma migrate dev
 
 # create migrate file (name init で作る)
 npx prisma migrate dev --name init
@@ -43,3 +51,13 @@ npx prisma migrate dev --name init
 # seed
 npm run seed
 ```
+
+### test db settings
+
+テスト用にマイグレーションをする方法がないので以下の手順で行う
+
+* .env の接続先を `_test` に変更する
+* `npx prisma migrate dev` を実行する
+* .env の接続先から `_test` を削除し、接続先を戻す。
+
+> 戻し忘れに注意すること
