@@ -33,10 +33,11 @@ describe('User model', () => {
     })
 
     it('should fail to create a new user with a duplicate email', async () => {
+        const email = faker.internet.email()
         await db.user.create({
             data: {
                 name: 'Test User',
-                email: 'test@example.com',
+                email: email,
                 password: 'password123',
                 provider: 'local',
             },
@@ -46,7 +47,7 @@ describe('User model', () => {
             db.user.create({
                 data: {
                     name: 'Test User 2',
-                    email: 'test@example.com', // 重複したメールアドレス
+                    email: email, // 重複したメールアドレス
                     password: 'password456',
                     provider: 'local',
                 },

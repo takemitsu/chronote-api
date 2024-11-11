@@ -20,7 +20,7 @@ const authController = {
     async signup(c: Context) {
         const result = signupSchema.safeParse(await c.req.json())
         if (!result.success) {
-            return c.json({ error: result.error.message }, 400)
+            return c.json({ error: result.error.issues }, 400)
         }
 
         const { name, email, password } = result.data
@@ -36,11 +36,11 @@ const authController = {
             })
             return c.json(user, 201)
         } catch (error: any) {
-            console.error(error)
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
                 // ユニーク制約エラー
                 return c.json({ error: 'Email already exists' }, 400)
             }
+            console.error(error)
             return c.json({ error: 'Failed to create user' }, 500)
         }
     },
