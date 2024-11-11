@@ -33,7 +33,7 @@ export const authMiddleware = () => {
             // 次のミドルウェアまたはコントローラーに処理を移譲
             await next()
         } catch (error) {
-            console.debug('JWT verification error:', error)
+            // console.debug('JWT verification error:', error)
             return c.json({ error: 'Invalid token' }, 401)
         }
     }
