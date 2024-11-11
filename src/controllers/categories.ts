@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import { Context } from 'hono'
 
@@ -114,6 +114,10 @@ const categoryController = {
             })
             return c.json(category, 200)
         } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+                // 更新対象のカテゴリが見つからない場合
+                return c.json({ error: 'Category not found' }, 404) // 404 エラーを返す
+            }
             console.error(error)
             return c.json({ error: 'Failed to update category' }, 500)
         }
@@ -134,6 +138,10 @@ const categoryController = {
             await prisma.category.delete({ where: { id, userId: parseInt(userId, 10) } })
             return c.json({ message: `Category ${id} deleted` }, 204)
         } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+                // 更新対象のカテゴリが見つからない場合
+                return c.json({ error: 'Category not found' }, 404) // 404 エラーを返す
+            }
             console.error(error)
             return c.json({ error: 'Failed to delete category' }, 500)
         }

@@ -12,8 +12,8 @@ router.route('/auth', authRouter)
 
 // 認証が必要なルートに authMiddleware を適用する
 router.use('/users/*', authMiddleware())
-router.use('/categories', authMiddleware())
-router.use('/anniversaries', authMiddleware())
+router.use('/categories/*', authMiddleware())
+router.use('/anniversaries/*', authMiddleware())
 
 router.route('/users', userRouter)
 router.route('/categories', categoryRouter)
