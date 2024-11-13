@@ -10,6 +10,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
 
 describe('authService', () => {
     beforeEach(async () => {
+        await db.anniversary.deleteMany({})
+        await db.category.deleteMany({})
         await db.user.deleteMany({})
     })
 
