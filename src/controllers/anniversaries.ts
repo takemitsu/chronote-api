@@ -6,14 +6,38 @@ const prisma = new PrismaClient()
 
 const createAnniversarySchema = z.object({
     name: z.string().min(1, 'Name is required'),
-    date: z.string().datetime({ message: 'Invalid date format' }),
+    date: z
+        .string()
+        .refine(
+            (value) => {
+                try {
+                    const date = new Date(value);
+                    return !isNaN(date.getTime());
+                } catch {
+                    return false;
+                }
+            },
+            { message: 'Invalid date format' }
+        ),
     categoryId: z.number().int().positive(),
     description: z.string().optional().nullable(),
 })
 
 const updateAnniversarySchema = z.object({
     name: z.string().min(1, 'Name is required'),
-    date: z.string().datetime({ message: 'Invalid date format' }),
+    date: z
+        .string()
+        .refine(
+            (value) => {
+                try {
+                    const date = new Date(value);
+                    return !isNaN(date.getTime());
+                } catch {
+                    return false;
+                }
+            },
+            { message: 'Invalid date format' }
+        ),
     categoryId: z.number().int().positive(),
     description: z.string().optional().nullable(),
 })
@@ -56,13 +80,14 @@ const anniversaryController = {
         }
 
         try {
-            const { name, date, categoryId } = parsed.data
+            const { name, date, categoryId, description } = parsed.data
             const anniversary = await prisma.anniversary.create({
                 data: {
                     userId: parseInt(userId, 10),
                     name,
                     date: new Date(date),
                     categoryId,
+                    description,
                 },
             })
             return c.json(anniversary, 201)
@@ -113,10 +138,10 @@ const anniversaryController = {
         const id = parseInt(c.req.param('id'), 10)
 
         try {
-            const { name, date, categoryId } = parsed.data
+            const { name, date, categoryId, description } = parsed.data
             const anniversary = await prisma.anniversary.update({
                 where: { id, userId: parseInt(userId, 10) },
-                data: { name, date: new Date(date), categoryId },
+                data: { name, date: new Date(date), categoryId, description },
             })
             return c.json(anniversary)
         } catch (error) {

@@ -1,4 +1,3 @@
-import { Prisma, PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import { Context } from 'hono'
 import authService from '../services/authService'
@@ -44,7 +43,9 @@ const authController = {
         try {
             const { user, token } = await authService.signin(email, password)
 
-            return c.json({ user, token })
+            return c.json({ user: {
+                id: user.id, name: user.name, email: user.email
+                }, token })
         } catch (error: any) {
             if (error.message === 'Invalid email or password') {
                 return c.json({ error: 'Invalid email or password' }, 401)

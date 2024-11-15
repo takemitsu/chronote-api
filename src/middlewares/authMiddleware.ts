@@ -1,5 +1,5 @@
 import { Context, Next } from 'hono'
-import * as jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 
 // JWT のシークレットキー
 const JWT_SECRET = process.env.JWT_SECRET

@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import * as bcrypt from 'bcrypt'
-import * as jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 
 const prisma = new PrismaClient()
 
