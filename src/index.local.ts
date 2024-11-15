@@ -2,10 +2,17 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import router from './routes'
 import * as dotenv from 'dotenv'
+import { cors } from 'hono/cors'
 // .env ファイルを読み込む
 dotenv.config()
 
 const app = new Hono()
+
+// CORS ミドルウェアを適用
+app.use('/api/*', cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+}))
 
 app.get('/', (c) => {
     return c.text('Hello Hono!')
