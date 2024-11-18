@@ -27,8 +27,17 @@ const categoryController = {
         try {
             const categories = await prisma.category.findMany({
                 where: { userId: parseInt(userId, 10) },
-            })
-            return c.json(categories || [], 200)
+                include: {
+                    _count: {
+                        select: {anniversaries: true}
+                    }
+                }
+            }) || []
+            const result = categories.map(category => ({
+                ...category,
+                anniversariesCount: category._count.anniversaries,
+            }))
+            return c.json(result, 200)
         } catch (error) {
             console.error(error)
             return c.json({ error: 'Failed to fetch categories' }, 500)
