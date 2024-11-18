@@ -135,6 +135,21 @@ const categoryController = {
         const id = parseInt(c.req.param('id'), 10)
 
         try {
+            // Anniversariesが存在するかを確認
+            const category = await prisma.category.findUnique({
+                where: { id, userId: parseInt(userId, 10) },
+                include: { anniversaries: true },
+            });
+
+            if (!category) {
+                return c.json({ error: 'Category not found' }, 404);
+            }
+
+            if (category.anniversaries.length > 0) {
+                return c.json({ error: 'Category has associated anniversaries and cannot be deleted' }, 400);
+            }
+
+            // Anniversariesが存在しない場合に削除
             await prisma.category.delete({ where: { id, userId: parseInt(userId, 10) } })
             return c.json({ message: `Category ${id} deleted` }, 204)
         } catch (error) {
